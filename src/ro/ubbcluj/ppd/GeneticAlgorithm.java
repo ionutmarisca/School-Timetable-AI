@@ -1,8 +1,13 @@
 package ro.ubbcluj.ppd;
 
 
+<<<<<<< HEAD
 import mpi.MPI;
 
+=======
+import java.util.ArrayList;
+import java.util.List;
+>>>>>>> origin/master
 import java.util.stream.IntStream;
 
 public class GeneticAlgorithm {
@@ -12,17 +17,26 @@ public class GeneticAlgorithm {
     private double mutationRate;
     private double crossoverRate;
     private int elitismCount;
+<<<<<<< HEAD
     private String[] args;
 
     public GeneticAlgorithm(int populationSize, double mutationRate, double crossoverRate, int elitismCount,
                             int tournamentSize, String[] args) {
+=======
+
+    public GeneticAlgorithm(int populationSize, double mutationRate, double crossoverRate, int elitismCount,
+                            int tournamentSize) {
+>>>>>>> origin/master
 
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
         this.crossoverRate = crossoverRate;
         this.elitismCount = elitismCount;
         this.tournamentSize = tournamentSize;
+<<<<<<< HEAD
         this.args = args;
+=======
+>>>>>>> origin/master
     }
 
     /**
@@ -87,6 +101,7 @@ public class GeneticAlgorithm {
      * @param timetable
      */
     public void evalPopulation(Population population, Timetable timetable) {
+<<<<<<< HEAD
         MPI.Init(args);
         int me = MPI.COMM_WORLD.Rank();
         int size = MPI.COMM_WORLD.Size();
@@ -115,6 +130,36 @@ public class GeneticAlgorithm {
             MPI.COMM_WORLD.Ssend(fitness, 1, 1, MPI.DOUBLE, 0, MPI.ANY_TAG);
         }
         MPI.Finalize();
+=======
+        double populationFitness = 0;
+        List<Thread> allThreads = new ArrayList<>();
+
+        for (Individual individual : population.getIndividuals()) {
+            Thread thread = new Thread(() -> calcFitness(individual, timetable));
+            allThreads.add(thread);
+        }
+
+        for (Thread thread : allThreads) {
+            thread.start();
+        }
+
+        for (Thread thread : allThreads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // At this point, we should have all fitness values calculated for each Individual
+        // Loop over population evaluating individuals and summing population
+        // fitness
+        for (Individual individual : population.getIndividuals()) {
+            populationFitness += individual.getFitness();
+        }
+
+        population.setPopulationFitness(populationFitness);
+>>>>>>> origin/master
     }
 
     /**
@@ -142,8 +187,11 @@ public class GeneticAlgorithm {
     /**
      * Selects parent for crossover using tournament selection
      * <p>
+<<<<<<< HEAD
      * Tournament selection works by choosing N random individuals, and then
      * choosing the best of those.
+=======
+>>>>>>> origin/master
      *
      * @param population
      * @return The individual selected as a parent
